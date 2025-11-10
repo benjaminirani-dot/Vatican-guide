@@ -9,6 +9,11 @@
     <meta name="description" content="Unofficial, richly-detailed guide to Vatican City. Interactive OpenStreetMap, in-depth history, visitor tips, and a dedicated prayer sanctuary with extensive traditional Catholic prayers.">
     <meta name="author" content="Benjamin Irani Fey – Made in Switzerland">
     <meta name="theme-color" content="#8B0000">
+    <meta property="og:title" content="Vatican City Guide | Interactive Map & Sacred Prayers">
+    <meta property="og:description" content="Explore St. Peter's, Sistine Chapel, Vatican Gardens & more with OpenStreetMap. Full prayers included.">
+    <meta property="og:image" content="https://thumbs.dreamstime.com/b/st-peter-s-basilica-dawn-vatican-city-rome-italy-st-peter-s-square-dawn-all-its-beauty-usual-crowd-183038635.jpg">
+    <meta property="og:url" content="https://yourdomain.com/vatican-guide">
+    <meta property="og:type" content="website">
 
     <title>Vatican City Guide | Interactive Map, History & Sacred Prayers</title>
 
@@ -57,7 +62,7 @@
         header{
             position:relative;
             background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),
-                       url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')
+                       url('https://thumbs.dreamstime.com/b/st-peter-s-basilica-dawn-vatican-city-rome-italy-st-peter-s-square-dawn-all-its-beauty-usual-crowd-183038635.jpg')
                        center/cover no-repeat;
             color:var(--vatican-white);
             text-align:center;
@@ -214,6 +219,27 @@
             box-shadow:0 4px 12px rgba(0,0,0,.08);
         }
 
+        /* ---------- IMAGE GALLERY ---------- */
+        .image-gallery{
+            display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+            gap:20px;margin:40px 0;
+        }
+        .gallery-item{
+            position:relative;overflow:hidden;border-radius:12px;
+            box-shadow:0 6px 18px rgba(0,0,0,.14);
+        }
+        .gallery-item img{
+            width:100%;height:220px;object-fit:cover;
+            transition:transform .4s;
+        }
+        .gallery-item:hover img{transform:scale(1.08);}
+        .gallery-caption{
+            position:absolute;bottom:0;left:0;right:0;
+            background:linear-gradient(transparent,rgba(0,0,0,.75));
+            color:#fff;padding:20px 16px 14px;
+            font-size:1rem;font-weight:600;
+        }
+
         /* ---------- FOOTER ---------- */
         footer{
             background:var(--dark-gray);color:var(--vatican-white);
@@ -234,9 +260,10 @@
             h1{font-size:2.9rem;}
             .nav-container{flex-direction:column;text-align:center;}
             #osm-map{height:520px;}
-            .osm-attribution{flex-direction:column;}
+            .osm-attribution{ and flex-direction:column;}
             .map-legend{grid-template-columns:1fr;}
             .prayer-sanctuary{padding:50px 25px;}
+            .image-gallery{grid-template-columns:1fr;}
         }
     </style>
 </head>
@@ -262,6 +289,7 @@
         <a href="#home">Home</a>
         <a href="#map">Interactive Map</a>
         <a href="#explore">Landmarks</a>
+        <a href="#gallery">Photo Gallery</a>
         <a href="#tips">Visitor Tips</a>
         <a href="#history">History</a>
         <a href="#prayers">Sacred Prayers</a>
@@ -315,7 +343,7 @@
 
         <div class="grid">
             <div class="card">
-                <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="St. Peter's Basilica">
+                <img src="https://thumbs.dreamstime.com/b/st-peter-s-basilica-dawn-vatican-city-rome-italy-st-peter-s-square-dawn-all-its-beauty-usual-crowd-183038635.jpg" alt="St. Peter's Basilica - Grand Facade at Dawn">
                 <div class="card-content">
                     <h3>St. Peter’s Basilica</h3>
                     <p>The largest Christian church on Earth. Climb the 551 steps to the dome for a breathtaking 360° view of Rome and the Vatican.</p>
@@ -323,7 +351,7 @@
             </div>
 
             <div class="card">
-                <img src="https://images.unsplash.com/photo-1588693881060-47f7b66206d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Sistine Chapel">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/%27Adam%27s_Creation_Sistine_Chapel_ceiling%27_by_Michelangelo_JBU33cut.jpg/500px-%27Adam%27s_Creation_Sistine_Chapel_ceiling%27_by_Michelangelo_JBU33cut.jpg" alt="Michelangelo's Creation of Adam - Sistine Chapel">
                 <div class="card-content">
                     <h3>Sistine Chapel</h3>
                     <p>Michelangelo’s frescoes – <em>The Creation of Adam</em> and <em>The Last Judgment</em> – are masterpieces of Renaissance art. Photography prohibited inside.</p>
@@ -331,7 +359,7 @@
             </div>
 
             <div class="card">
-                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fcbf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Vatican Gardens">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNV3o_BOAZOlcMfjGtgAVAR4G5CYRqEaTPSQ&s" alt="Vatican Gardens - Serene Fountain">
                 <div class="card-content">
                     <h3>Vatican Gardens</h3>
                     <p>23 hectares of manicured lawns, fountains, and medieval fortifications. Guided tours only – book early.</p>
@@ -339,7 +367,7 @@
             </div>
 
             <div class="card">
-                <img src="https://images.unsplash.com/photo-1601581875039-0e67b2c5e90f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Apostolic Palace">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSd5LG4P-oNjAhz45MpsYAmefOE4qILNLe2SlSmUCO3guaRxkChUa4WFpYLJ1w8Nc1tTHA&usqp=CAU" alt="Apostolic Palace - Papal Residence">
                 <div class="card-content">
                     <h3>Apostolic Palace</h3>
                     <p>Official residence of the Pope. Includes the Papal Apartments, the Raphael Rooms, and the famous “Window of the Angelus.”</p>
@@ -347,7 +375,7 @@
             </div>
 
             <div class="card">
-                <img src="https://images.unsplash.com/photo-1599663253172-4c1d4fad8fd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Vatican Necropolis">
+                <img src="https://stpetersbasilica.info/Necropolis/Pic/scavi-tombI-mb-a.jpg" alt="Vatican Necropolis - Ancient Tomb">
                 <div class="card-content">
                     <h3>Vatican Necropolis (Scavi)</h3>
                     <p>Underground excavation beneath the Basilica containing St. Peter’s tomb. Limited to 250 visitors per day – reserve months ahead.</p>
@@ -355,11 +383,67 @@
             </div>
 
             <div class="card">
-                <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Swiss Guard Barracks">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLBpjlsz_SdzcRljLZnju6n3naCd8p-s-A-g&s" alt="Swiss Guard in Traditional Uniform">
                 <div class="card-content">
                     <h3>Swiss Guard</h3>
                     <p>The colorful Renaissance-uniformed protectors of the Pope since 1506. Catch the changing of the guard at the Bronze Door.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================== PHOTO GALLERY ================== -->
+    <section id="gallery">
+        <h2>Photo Gallery of Vatican City</h2>
+        <p class="intro">A visual journey through the sacred beauty of the smallest country in the world.</p>
+
+        <div class="image-gallery">
+            <!-- 1. St. Peter's Square at Dawn -->
+            <div class="gallery-item">
+                <img src="https://thumbs.dreamstime.com/b/st-peter-s-basilica-dawn-vatican-city-rome-italy-st-peter-s-square-dawn-all-its-beauty-usual-crowd-183038635.jpg" alt="St. Peter's Square at Dawn">
+                <div class="gallery-caption">St. Peter’s Square at Dawn</div>
+            </div>
+
+            <!-- 2. Inside St. Peter's Dome -->
+            <div class="gallery-item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpnoTEBPKjtDcEsVPYINmjERZ8y4g6HWylDQ&s" alt="Inside St. Peter's Dome">
+                <div class="gallery-caption">Inside the Dome of St. Peter’s</div>
+            </div>
+
+            <!-- 3. Creation of Adam -->
+            <div class="gallery-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/%27Adam%27s_Creation_Sistine_Chapel_ceiling%27_by_Michelangelo_JBU33cut.jpg/500px-%27Adam%27s_Creation_Sistine_Chapel_ceiling%27_by_Michelangelo_JBU33cut.jpg" alt="Michelangelo's Creation of Adam">
+                <div class="gallery-caption">Creation of Adam – Sistine Chapel</div>
+            </div>
+
+            <!-- 4. Vatican Gardens Fountain -->
+            <div class="gallery-item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNV3o_BOAZOlcMfjGtgAVAR4G5CYRqEaTPSQ&s" alt="Fountain in Vatican Gardens">
+                <div class="gallery-caption">Fountain in the Vatican Gardens</div>
+            </div>
+
+            <!-- 5. Swiss Guard -->
+            <div class="gallery-item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLBpjlsz_SdzcRljLZnju6n3naCd8p-s-A-g&s" alt="Swiss Guard on Duty">
+                <div class="gallery-caption">Swiss Guard on Duty</div>
+            </div>
+
+            <!-- 6. Papal Audience in St. Peter’s Square -->
+            <div class="gallery-item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmNWjWSqkwqxXdyQC33gxZFyAcQgK0Ndwrsw&s" alt="Papal Audience in St. Peter’s Square">
+                <div class="gallery-caption">Papal Audience in St. Peter’s Square</div>
+            </div>
+
+            <!-- 7. Apostolic Palace -->
+            <div class="gallery-item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSd5LG4P-oNjAhz45MpsYAmefOE4qILNLe2SlSmUCO3guaRxkChUa4WFpYLJ1w8Nc1tTHA&usqp=CAU" alt="Apostolic Palace Exterior">
+                <div class="gallery-caption">Apostolic Palace – Seat of the Holy See</div>
+            </div>
+
+            <!-- 8. Michelangelo's Pietà -->
+            <div class="gallery-item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU-KA_9ItJQXapjPjkTHoMhA-Xbci2vCvhSw&s" alt="Michelangelo's Pietà">
+                <div class="gallery-caption">Michelangelo’s Pietà – St. Peter’s Basilica</div>
             </div>
         </div>
     </section>
@@ -439,7 +523,7 @@
                 sicut et nos dimittimus debitoribus nostris.<br>
                 Et ne nos inducas in tentationem,<br>
                 sed libera nos a malo.<br>
-                Amen.
+               : Amen.
             </div>
 
             <!-- 2. Hail Mary -->
