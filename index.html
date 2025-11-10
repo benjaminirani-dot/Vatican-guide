@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vatican City Guide | Interactive Map & Explorer</title>
+    <meta name="description" content="Unofficial guide to Vatican City with a fully interactive OpenStreetMap-powered map centered on St. Peter's Basilica. Explore landmarks, history, and spiritual sites.">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+
+    <style>
+        :root {
+            --vatican-gold: #D4AF37;
+            --vatican-red: #8B0000;
+            --vatican-white: #FFFFFF;
+            --cream: #F5F5DC;
+            --dark-gray: #2F2F2F;
+            --light-gold: #E8C66A;
+            --osm-blue: #0078A8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background-color: #faf9f6;
+            color: var(--dark-gray);
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        header {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+            color: var(--vatican-white);
+            text-align: center;
+            padding: 130px 20px 90px;
+            position: relative;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(139, 0, 0, 0.5);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .vatican-logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background: var(--vatican-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: var(--vatican-red);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 4rem;
+            margin-bottom: 12px;
+            text-shadow: 3px 3px 12px rgba(0,0,0,0.8);
+        }
+
+        .subtitle {
+            font-size: 1.6rem;
+            font-style: italic;
+            opacity: 0.94;
+            margin-bottom: 8px;
+        }
+
+        .guide-notice {
+            font-size: 1rem;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        nav {
+            background-color: var(--vatican-red);
+            padding: 18px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        nav a {
+            color: var(--vatican-white);
+            text-decoration: none;
+            padding: 14px 24px;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 1.05rem;
+        }
+
+        nav a:hover {
+            background: var(--vatican-gold);
+            color: var(--vatican-red);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        section {
+            margin-bottom: 100px;
+            background: var(--vatican-white);
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.9rem;
+            color: var(--vatican-red);
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: var(--vatican-gold);
+            margin: 20px auto 0;
+            border-radius: 2px;
+        }
+
+        .intro {
+            text-align: center;
+            font-size: 1.3rem;
+            max-width: 900px;
+            margin: 0 auto 50px;
+            color: #444;
+            font-style: italic;
+        }
+
+        #osm-map {
+            height: 650px;
+            width: 100%;
+            border-radius: 14px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            border: 4px solid var(--vatican-gold);
+        }
+
+        .osm-attribution {
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 0.95rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .osm-logo {
+            height: 32px;
+            filter: brightness(0) saturate(100%) invert(20%) sepia(80%) saturate(3000%) hue-rotate(190deg) brightness(90%);
+        }
+
+        .osm-links a {
+            color: var(--osm-blue);
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 8px;
+        }
+
+        .osm-links a:hover {
+            text-decoration: underline;
+        }
+
+        .map-legend {
+            background: rgba(255,255,255,0.96);
+            padding: 18px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 3px solid #fff;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        .facts {
+            background: linear-gradient(135deg, var(--light-gold), var(--vatican-gold));
+            color: var(--vatican-red);
+            padding: 20px 28px;
+            border-radius: 12px;
+            margin: 25px 0;
+            font-weight: 600;
+            text-align: center;
+            font-size: 1.15rem;
+        }
+
+        footer {
+            background: var(--dark-gray);
+            color: var(--vatican-white);
+            text-align: center;
+            padding: 70px 20px 50px;
+            margin-top: 70px;
+        }
+
+        .footer-links a {
+            color: var(--vatican-gold);
+            margin: 0 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .social-icons a {
+            color: var(--vatican-gold);
+            font-size: 1.8rem;
+            margin: 0 14px;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: var(--light-gold);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.8rem; }
+            .nav-container { flex-direction: column; text-align: center; }
+            #osm-map { height: 500px; }
+            .osm-attribution { flex-direction: column; text-align: center; }
+            .map-legend { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="vatican-logo">
+                <i class="fas fa-cross"></i>
+            </div>
+            <h1>Vatican City Guide</h1>
+            <p class="subtitle">Interactive Explorer • St. Peter's & Beyond</p>
+            <p class="guide-notice">Unofficial Guide • Powered by OpenStreetMap</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <a href="#home">Home</a>
+            <a href="#map">Interactive Map</a>
+            <a href="#explore">Explore</a>
+            <a href="#tips">Visitor Tips</a>
+            <a href="#about">About</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- Home -->
+        <section id="home">
+            <h2>Welcome to the Heart of Faith</h2>
+            <p class="intro">
+                This is an <strong>unofficial interactive guide</strong> to Vatican City, using the power of <strong>OpenStreetMap</strong> to let you explore every path, building, and sacred site in stunning detail.
+            </p>
+
+            <div class="facts">
+                <i class="fas fa-info-circle"></i> Map powered by <strong>OpenStreetMap</strong> — open data, community-edited, free forever.
+            </div>
+        </section>
+
+        <!-- Interactive OSM Map -->
+        <section id="map">
+            <h2>Explore Vatican City on OpenStreetMap</h2>
+            <p class="intro">
+                Zoom, pan, and click to discover St. Peter's Basilica, the Vatican Museums, Gardens, and more. 
+                <br><strong>Direct link:</strong> <a href="https://www.openstreetmap.org/#map=17/41.902481/12.454355" target="_blank" style="color:var(--osm-blue); font-weight:600;">Open in Full OSM</a>
+            </p>
+
+            <!-- Embedded OSM Map -->
+            <div id="osm-map"></div>
+
+            <!-- OpenStreetMap Attribution -->
+            <div class="osm-attribution">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/be/Openstreetmap_logo.svg" alt="OpenStreetMap Logo" class="osm-logo">
+                <div class="osm-links">
+                    <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a> |
+                    <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap.org</a>
+                </div>
+            </div>
+
+            <div class="map-legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background:#8B0000;"></div>
+                    <span><strong>Churches & Basilicas</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background:#D4AF37;"></div>
+                    <span><strong>Museums & Palaces</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background:#228B22;"></div>
+                    <span><strong>Gardens & Nature</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background:#4169E1;"></div>
+                    <span><strong>Services & Entrances</strong></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Explore -->
+        <section id="explore">
+            <h2>Key Landmarks</h2>
+            <p class="intro">Click any marker on the map to learn more, or explore the highlights below.</p>
+
+            <div class="grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:30px; margin-top:40px;">
+                <div class="card" style="background:white; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.12);">
+                    <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="St. Peter's Basilica" style="width:100%; height:200px; object-fit:cover;">
+                    <div class="card-content" style="padding:24px;">
+                        <h3 style="color:var(--vatican-red); font-family:'Cinzel',serif;">St. Peter's Basilica</h3>
+                        <p>Largest church in the world. Climb the dome for panoramic views.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="background:white; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.12);">
+                    <img src="https://images.unsplash.com/photo-1588693881060-47f7b66206d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Sistine Chapel" style="width:100%; height:200px; object-fit:cover;">
+                    <div class="card-content" style="padding:24px;">
+                        <h3 style="color:var(--vatican-red); font-family:'Cinzel',serif;">Sistine Chapel</h3>
+                        <p>Michelangelo's masterpiece. No photos allowed inside.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="background:white; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.12);">
+                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fcbf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Vatican Gardens" style="width:100%; height:200px; object-fit:cover;">
+                    <div class="card-content" style="padding:24px;">
+                        <h3 style="color:var(--vatican-red); font-family:'Cinzel',serif;">Vatican Gardens</h3>
+                        <p>Book a guided tour to walk through 23 hectares of beauty.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tips -->
+        <section id="tips">
+            <h2>Visitor Tips</h2>
+            <ul style="max-width:800px; margin:30px auto; font-size:1.15rem; line-height:2;">
+                <li><strong>Dress Code:</strong> Shoulders and knees covered. No hats inside.</li>
+                <li><strong>Best Time:</strong> Early morning or late afternoon to avoid crowds.</li>
+                <li><strong>Tickets:</strong> Book <a href="https://www.museivaticani.va" target="_blank" style="color:var(--vatican-red);">Vatican Museums online</a> in advance.</li>
+                <li><strong>Free Entry:</strong> St. Peter's Basilica is free (security line).</li>
+                <li><strong>Papal Audience:</strong> Wednesdays — free tickets via <a href="https://www.vatican.va/various/prefettura/index_en.html" target="_blank" style="color:var(--vatican-red);">Prefecture</a>.</li>
+            </ul>
+        </section>
+
+        <!-- About -->
+        <section id="about">
+            <h2>About This Guide</h2>
+            <p class="intro">
+                This is an <strong>independent, unofficial guide</strong> created to help visitors explore Vatican City using the <strong>free and open OpenStreetMap</strong> platform.
+            </p>
+            <p style="text-align:center; margin:30px 0; font-size:1.1rem;">
+                Map Data © <a href="https://www.openstreetmap.org/copyright" target="_blank" style="color:var(--osm-blue);">OpenStreetMap contributors</a><br>
+                Licensed under <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" style="color:var(--osm-blue);">ODbL</a>
+            </p>
+        </section>
+
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="https://www.openstreetmap.org/#map=17/41.902481/12.454355" target="_blank">View on OpenStreetMap</a> |
+            <a href="https://www.vatican.va" target="_blank">Official Vatican</a> |
+            <a href="https://www.museivaticani.va" target="_blank">Vatican Museums</a>
+        </div>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+        <p>© 2025 Vatican City Guide | Made in Switzerland • <i class="fas fa-heart" style="color:#FF4500;"></i> with Open Data</p>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+    <script>
+        // Initialize OSM-based Vatican Map
+        const map = L.map('osm-map').setView([41.902481, 12.454355], 17);
+
+        // OpenStreetMap Tile Layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 20
+        }).addTo(map);
+
+        // Key Vatican Landmarks (from OSM data)
+        const landmarks = [
+            { name: "St. Peter's Basilica", lat: 41.9022, lng: 12.4534, type: "religious", url: "https://www.vatican.va/various/basiliche/san_pietro/index_it.htm" },
+            { name: "Sistine Chapel", lat: 41.9030, lng: 12.4545, type: "religious", url: "https://www.museivaticani.va/content/museivaticani/en/collezioni/musei/cappella-sistina.html" },
+            { name: "Vatican Museums Entrance", lat: 41.9063, lng: 12.4548, type: "museum", url: "https://www.museivaticani.va" },
+            { name: "Apostolic Palace", lat: 41.9038, lng: 12.4560, type: "museum", url: "https://www.vatican.va" },
+            { name: "Vatican Gardens", lat: 41.9040, lng: 12.4525, type: "garden", url: "https://www.museivaticani.va/content/museivaticani/en/organizza-visita/gite-giardini.html" },
+            { name: "Swiss Guard", lat: 41.9025, lng: 12.4575, type: "service", url: "https://www.vatican.va/roman_curia/swiss_guard/index_it.htm" }
+        ];
+
+        const markerGroup = L.markerClusterGroup();
+
+        landmarks.forEach(point => {
+            const color = point.type === 'religious' ? '#8B0000' :
+                         point.type === 'museum' ? '#D4AF37' :
+                         point.type === 'garden' ? '#228B22' : '#4169E1';
+
+            const marker = L.circleMarker([point.lat, point.lng], {
+                radius: 10,
+                fillColor: color,
+                color: '#fff',
+                weight: 3,
+                opacity: 1,
+                fillOpacity: 0.9
+            });
+
+            marker.bindPopup(`
+                <strong>${point.name}</strong><br>
+                <a href="${point.url}" target="_blank" style="color:#8B0000; font-weight:600;">Visit Official Site</a>
+            `);
+
+            markerGroup.addLayer(marker);
+        });
+
+        map.addLayer(markerGroup);
+
+        // Add scale
+        L.control.scale().addTo(map);
+    </script>
+</body>
+</html>
